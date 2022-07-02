@@ -95,6 +95,8 @@ class Patient(models.Model):
 	contact_person = models.CharField(max_length=11, verbose_name="Телефонный номер контактного лица")
 	ambulatory_card = models.CharField(max_length=10, verbose_name="Номер амбулаторной карты из системы Interin")
 	finance_source = models.SmallIntegerField(verbose_name="Источник финансирования")
+	created = models.DateTimeField(verbose_name=createdAt)
+	changed = models.DateTimeField(verbose_name=changedAt)
 
 	class Meta:
 		verbose_name = "Пациент"
