@@ -7,7 +7,6 @@ changedAt = "Время изменения записи"
 
 
 class Medication(models.Model):
-	id = models.UUIDField(verbose_name="UUID", primary_key=True, default=uuid.uuid4, editable=False)
 	name = models.CharField(max_length=120, verbose_name="Официальное название препарата")
 	nomenclature = models.CharField(max_length=120, verbose_name="Номенклатура препарата")
 	manufacturer = models.CharField(max_length=120, verbose_name="Производитель препарата")
@@ -27,7 +26,6 @@ class Medication(models.Model):
 
 
 class MedOrder(models.Model):
-	id = models.UUIDField(verbose_name="UUID", primary_key=True, default=uuid.uuid4, editable=False)
 	supplier = models.CharField(max_length=120, verbose_name="Поставщик препаратов")
 	form_date = models.DateTimeField(verbose_name="Время формирования и отправки заказа")
 	delivery_rate = models.DateTimeField(verbose_name="Время поступления заказа")
@@ -44,7 +42,6 @@ class MedOrder(models.Model):
 
 
 class LabEvent(models.Model):
-	id = models.UUIDField(verbose_name="UUID", primary_key=True, default=uuid.uuid4, editable=False)
 	lab_type = models.ForeignKey("LabType", on_delete=models.DO_NOTHING, verbose_name="ID вида анализа (внешний ключ)")
 	patient_id = models.ForeignKey("Patient", on_delete=models.CASCADE)
 	value = models.CharField(max_length=200, verbose_name="Показатель")
@@ -89,7 +86,6 @@ class Patient(models.Model):
 		(9, 'ПОЖИЛОЙ ХГРИБЕНКО'),
 	)
 
-	id = models.UUIDField(verbose_name="UUID", primary_key=True, default=uuid.uuid4, editable=False)
 	full_name = models.CharField(max_length=96, verbose_name="ФИО пациента")
 	phone_number = models.CharField(max_length=11, verbose_name="Номер телефона пациента")
 	adverse_reactions = models.TextField(verbose_name="Нежелательные реакции")
@@ -143,7 +139,6 @@ class Therapy(models.Model):
 
 
 class Prescription(models.Model):
-	id = models.UUIDField(verbose_name="UUID", primary_key=True, default=uuid.uuid4, editable=False)
 	therapy_id = models.ForeignKey("Therapy", on_delete=models.DO_NOTHING)
 	medication_id = models.ForeignKey("Medication", on_delete=models.DO_NOTHING)
 	dose_amount = models.IntegerField(verbose_name="Кол-во списанного к терапии лекарства в дозах")
@@ -177,8 +172,6 @@ class IndexType(models.Model):
 
 
 class User(models.Model):
-	id = models.UUIDField(verbose_name="UUID пользователя (первичный ключ)", primary_key=True, default=uuid.uuid4,
-	                      editable=False)
 	login = models.CharField(max_length=127, verbose_name="Логин пользователя")
 	password = models.CharField(max_length=127, verbose_name="Пароль для входа (ключ шифрования BCrypt)")
 	roles = models.IntegerField(verbose_name="Роли пользователя")
@@ -192,8 +185,6 @@ class User(models.Model):
 
 
 class MedIndex(models.Model):
-	id = models.UUIDField(verbose_name="ID терапии (внешний ключ)", primary_key=True, default=uuid.uuid4,
-	                      editable=False)
 	therapy_id = models.ForeignKey("Therapy", verbose_name="ID терапии (внешний ключ)", on_delete=models.DO_NOTHING)
 	index_type_id = models.ForeignKey("IndexType", verbose_name="Вид индекса", on_delete=models.DO_NOTHING)
 	value = models.FloatField(verbose_name="Значение индекса")
@@ -211,10 +202,8 @@ class MedIndex(models.Model):
 
 
 class OrderEntry(models.Model):
-	medication_id = models.ForeignKey("Medication", on_delete=models.DO_NOTHING,
-	                                  verbose_name="UUID препарата (внешний ключ)")
-	medorder = models.ForeignKey("MedOrder", on_delete=models.DO_NOTHING,
-	                             verbose_name="UUID заказа в аптеку (внешний ключ)")
+	medication_id = models.ForeignKey("Medication", on_delete=models.DO_NOTHING, verbose_name="UUID препарата (внешний ключ)")
+	medorder = models.ForeignKey("MedOrder", on_delete=models.DO_NOTHING, verbose_name="UUID заказа в аптеку (внешний ключ)")
 	amount = models.IntegerField(verbose_name="Кол-во единиц на заказ")
 	created = models.DateTimeField(verbose_name=createdAt)
 	changed = models.DateTimeField(verbose_name=changedAt)
