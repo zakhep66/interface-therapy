@@ -22,7 +22,7 @@ class Medication(models.Model):
 		verbose_name_plural = "Препарат"
 
 	def __str__(self):
-		return str(self.name)
+		return str(self.nomenclature)
 
 
 class MedOrder(models.Model):
@@ -42,8 +42,8 @@ class MedOrder(models.Model):
 
 
 class LabEvent(models.Model):
-	lab_type = models.ForeignKey("LabType", on_delete=models.DO_NOTHING, verbose_name="ID вида анализа (внешний ключ)")
-	patient_id = models.ForeignKey("Patient", on_delete=models.CASCADE)
+	lab_type_id = models.ForeignKey("LabType", on_delete=models.DO_NOTHING, verbose_name="Номер вида анализа")
+	patient_id = models.ForeignKey("Patient", on_delete=models.CASCADE, verbose_name="Пациент")
 	value = models.CharField(max_length=200, verbose_name="Показатель")
 	valuenum = models.FloatField(verbose_name="Числовой показатель")
 	comments = models.TextField(verbose_name="Комментарий специалиста")
@@ -90,13 +90,11 @@ class Patient(models.Model):
 	phone_number = models.CharField(max_length=11, verbose_name="Номер телефона пациента")
 	adverse_reactions = models.TextField(verbose_name="Нежелательные реакции")
 	date_of_birth = models.DateTimeField(verbose_name="Дата рождения")
-	sex = models.SmallIntegerField(verbose_name="Пол пациента (формат ISO/IEC 5218)", choices=USER_TYPE_CHOICES)
+	sex = models.SmallIntegerField(verbose_name="Пол пациента", choices=USER_TYPE_CHOICES)
 	email = models.CharField(max_length=120, verbose_name="Электронная почта")
 	contact_person = models.CharField(max_length=11, verbose_name="Телефонный номер контактного лица")
 	ambulatory_card = models.CharField(max_length=10, verbose_name="Номер амбулаторной карты из системы Interin")
 	finance_source = models.SmallIntegerField(verbose_name="Источник финансирования")
-	created = models.DateTimeField(verbose_name=createdAt)
-	changed = models.DateTimeField(verbose_name=changedAt)
 
 	class Meta:
 		verbose_name = "Пациент"
@@ -107,7 +105,7 @@ class Patient(models.Model):
 
 
 class PatientIcd(models.Model):
-	patient_id = models.ForeignKey("Patient", on_delete=models.DO_NOTHING)
+	patient_id = models.ForeignKey("Patient", on_delete=models.DO_NOTHING, verbose_name="Пациент")
 	code = models.CharField(max_length=8, verbose_name="Строковый код диагноза по классификации МКБ")
 	created = models.DateTimeField(verbose_name=createdAt)
 	changed = models.DateTimeField(verbose_name=changedAt)
@@ -121,10 +119,9 @@ class PatientIcd(models.Model):
 
 
 class Therapy(models.Model):
-	patient_id = models.ForeignKey("Patient", on_delete=models.DO_NOTHING)
+	patient_id = models.ForeignKey("Patient", on_delete=models.DO_NOTHING, verbose_name="Пациент")
 	start_time = models.DateTimeField(verbose_name="Время начала терапии")
 	end_time = models.DateTimeField(verbose_name="Время окончания терапии")
-	cabinet = models.CharField(max_length=15, verbose_name="Кабинет, где будет проходить терапия")
 	status = models.SmallIntegerField(verbose_name="Статус терапии")
 	comments = models.TextField(verbose_name="Примечание к записи о терапии")
 	created = models.DateTimeField(verbose_name=createdAt)
@@ -135,12 +132,12 @@ class Therapy(models.Model):
 		verbose_name_plural = "Записи о терапии"
 
 	def __str__(self):
-		return str(f'Время начала: {self.start_time}, кабинет: {self.cabinet}')
+		return str(f'Время начала: {self.start_time}')
 
 
 class Prescription(models.Model):
-	therapy_id = models.ForeignKey("Therapy", on_delete=models.DO_NOTHING)
-	medication_id = models.ForeignKey("Medication", on_delete=models.DO_NOTHING)
+	therapy_id = models.ForeignKey("Therapy", on_delete=models.DO_NOTHING, verbose_name="Номер терапии")
+	medication_id = models.ForeignKey("Medication", on_delete=models.DO_NOTHING, verbose_name="Препарат")
 	dose_amount = models.IntegerField(verbose_name="Кол-во списанного к терапии лекарства в дозах")
 	substance_amount = models.FloatField(verbose_name="Кол-во списанного к терапии вещества лекарства")
 	administration_type = models.SmallIntegerField(verbose_name="Тип введения препарата")
@@ -173,7 +170,7 @@ class IndexType(models.Model):
 
 class User(models.Model):
 	login = models.CharField(max_length=127, verbose_name="Логин пользователя")
-	password = models.CharField(max_length=127, verbose_name="Пароль для входа (ключ шифрования BCrypt)")
+	password = models.CharField(max_length=127, verbose_name="Пароль для входа")
 	roles = models.IntegerField(verbose_name="Роли пользователя")
 
 	class Meta:
@@ -185,13 +182,13 @@ class User(models.Model):
 
 
 class MedIndex(models.Model):
-	therapy_id = models.ForeignKey("Therapy", verbose_name="ID терапии (внешний ключ)", on_delete=models.DO_NOTHING)
-	index_type_id = models.ForeignKey("IndexType", verbose_name="Вид индекса", on_delete=models.DO_NOTHING)
+	therapy_id = models.ForeignKey("Therapy", verbose_name="Номер терапии", on_delete=models.DO_NOTHING)
+	index_type = models.SmallIntegerField(verbose_name="Тип индекса")
 	value = models.FloatField(verbose_name="Значение индекса")
 	aflag = models.CharField(max_length=32, verbose_name="Отклонение от нормы")
 	comments = models.TextField(verbose_name="Примечание специалиста")
-	created = models.TimeField(verbose_name=createdAt)
-	changed = models.TimeField(verbose_name=changedAt)
+	created = models.DateTimeField(verbose_name=createdAt)
+	changed = models.DateTimeField(verbose_name=changedAt)
 
 	class Meta:
 		verbose_name = "Клинический индекс"
@@ -202,8 +199,8 @@ class MedIndex(models.Model):
 
 
 class OrderEntry(models.Model):
-	medication_id = models.ForeignKey("Medication", on_delete=models.DO_NOTHING, verbose_name="UUID препарата (внешний ключ)")
-	medorder = models.ForeignKey("MedOrder", on_delete=models.DO_NOTHING, verbose_name="UUID заказа в аптеку (внешний ключ)")
+	medication_id = models.ForeignKey("Medication", on_delete=models.DO_NOTHING, verbose_name="Номер препарат")
+	med_order_id = models.ForeignKey("MedOrder", on_delete=models.DO_NOTHING, verbose_name="Номер заказа в аптеке")
 	amount = models.IntegerField(verbose_name="Кол-во единиц на заказ")
 	created = models.DateTimeField(verbose_name=createdAt)
 	changed = models.DateTimeField(verbose_name=changedAt)
