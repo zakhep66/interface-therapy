@@ -14,8 +14,8 @@ class LabTypeFilters(admin.ModelAdmin):
 
 class LabEventFilters(admin.ModelAdmin):
     list_display = ['patient_id', 'value', 'aflag', 'taken']
-    list_filter = ['lab_type','taken', 'created', 'changed']
-    search_fields = ['id', 'patient_id', 'lab_type']
+    list_filter = ['lab_type_id','taken']
+    search_fields = ['id', 'patient_id', 'lab_type_id']
 
 class IndexTypeFilters(admin.ModelAdmin):
     list_display = ['name', 'lolimnum', 'uplimnum']
@@ -33,20 +33,20 @@ class MedOrderFilters(admin.ModelAdmin):
     search_fields = ['supplier', 'status']
 
 class OrderEntryFilters(admin.ModelAdmin):
-    list_display = ['medication_id', 'medorder', 'amount']
-    list_filter = ['medication_id__name', 'medorder__supplier', 'created', 'changed']
-    search_fields = ['medication_id__name', 'medorder__supplier']
+    list_display = ['medication_id', 'med_order_id', 'amount']
+    list_filter = ['medication_id__name', 'med_order_id__supplier', 'created', 'changed']
+    search_fields = ['medication_id__name', 'med_order_id__supplier']
 
 
 class TherapyFilters(admin.ModelAdmin):
-    list_display = ['patient_id', 'cabinet', 'start_time', 'status']
-    list_filter = ['cabinet', 'status', 'start_time', 'end_time', 'created', 'changed']
-    search_fields = ['patient_id__full_name', 'cabinet']
+    list_display = ['patient_id', 'start_time', 'status']
+    list_filter = ['status', 'start_time', 'end_time', 'created', 'changed']
+    search_fields = ['patient_id__full_name']
 
 class MedIndexFilters(admin.ModelAdmin):
-    list_display = ['value', 'aflag', 'therapy_id', 'index_type_id']
-    list_filter = ['index_type_id__name']
-    search_fields = ['index_type_id__name', 'value', 'aflag']
+    list_display = ['value', 'aflag', 'therapy_id', 'index_type']
+    list_filter = ['index_type__name']
+    search_fields = ['index_type__name', 'value', 'aflag']
 
 class PrescriptionFilters(admin.ModelAdmin):
     list_display = ['administration_type','medication_id', 'dose_amount', 'therapy_id']
