@@ -81,12 +81,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('ENGINE'),
-        'NAME': os.getenv('NAME'),
-        'HOST': os.getenv('HOST'),
-        'USER': os.getenv('USER'),
-        'PASSWORD': os.getenv('PASSWORD'),
-        'PORT': os.getenv('PORT')
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'std_1305_therapy',
+        'HOST': 'std-mysql',
+        'USER': 'std_1305_therapy',
+        'PASSWORD': 'test1324',
+        'PORT': 3306
     }
 }
 
