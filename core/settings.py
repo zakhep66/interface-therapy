@@ -82,23 +82,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'std_1305_therapy',
-#         'HOST': 'std-mysql',
-#         'USER': 'std_1305_therapy',
-#         'PASSWORD': 'test1324',
-#         'PORT': 3306
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'std_1305_therapy',
+        'HOST': 'std-mysql',
+        'USER': 'std_1305_therapy',
+        'PASSWORD': 'test1324',
+        'PORT': 3306
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
@@ -144,5 +144,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-CORS_ALLOWED_ORIGINS = ['*']
+# CORS_ALLOWED_ORIGINS = [
+#     'https://std-1305.ist.mospolytech.ru:22'
+# ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
