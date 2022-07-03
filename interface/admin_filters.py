@@ -39,9 +39,9 @@ class MedOrderFilters(admin.ModelAdmin):
 
 
 class OrderEntryFilters(admin.ModelAdmin):
-	list_display = ['medication_id', 'medorder', 'amount']
-	list_filter = ['medication_id__nomenclature', 'medorder__supplier', 'created', 'changed']
-	search_fields = ['medication_id__nomenclature', 'medorder__supplier']
+	list_display = ['medication', 'medorder', 'amount']
+	list_filter = ['medication__nomenclature', 'medorder__supplier', 'created', 'changed']
+	search_fields = ['medication__nomenclature', 'medorder__supplier']
 
 
 class TherapyFilters(admin.ModelAdmin):
@@ -51,15 +51,15 @@ class TherapyFilters(admin.ModelAdmin):
 
 
 class MedIndexFilters(admin.ModelAdmin):
-	list_display = ['value', 'aflag', 'therapy_id', 'index_type']
+	list_display = ['value', 'aflag', 'therapy', 'index_type']
 	list_filter = ['value']
 	search_fields = ['value', 'aflag']
 
 
 class PrescriptionFilters(admin.ModelAdmin):
-	list_display = ['administration_type', 'medication_id', 'dose_amount', 'therapy_id']
-	list_filter = ['medication_id__nomenclature', 'administration_type', 'created', 'changed']
-	search_fields = ['medication_id__nomenclature']
+	list_display = ['administration_type', 'medication', 'dose_amount', 'therapy']
+	list_filter = ['medication__nomenclature', 'administration_type', 'created', 'changed']
+	search_fields = ['medication__nomenclature']
 
 
 class PatientFilters(admin.ModelAdmin):
