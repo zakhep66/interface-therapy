@@ -15,9 +15,9 @@ class LabTypeFilters(admin.ModelAdmin):
 
 
 class LabEventFilters(admin.ModelAdmin):
-	list_display = ['patient_id', 'value', 'aflag', 'taken']
+	list_display = ['patient', 'value', 'aflag', 'taken']
 	list_filter = ['labtype', 'taken']
-	search_fields = ['id', 'patient_id', 'labtype']
+	search_fields = ['id', 'patient', 'labtype']
 
 
 class IndexTypeFilters(admin.ModelAdmin):
@@ -45,9 +45,9 @@ class OrderEntryFilters(admin.ModelAdmin):
 
 
 class TherapyFilters(admin.ModelAdmin):
-	list_display = ['patient_id', 'date', 'time_period', 'status']
+	list_display = ['patient', 'date', 'time_period', 'status']
 	list_filter = ['status', 'date', 'created', 'changed']
-	search_fields = ['patient_id__full_name']
+	search_fields = ['patient__full_name']
 
 
 class MedIndexFilters(admin.ModelAdmin):
