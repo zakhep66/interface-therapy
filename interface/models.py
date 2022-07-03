@@ -2,10 +2,14 @@
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+
+
+createdAt = "Время создания записи"
+changedAt = "Время изменения записи"
 
 
 class AuthGroup(models.Model):
@@ -82,6 +86,11 @@ class Customer(models.Model):
     class Meta:
         managed = False
         db_table = 'customer'
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
+    def __str__(self):
+        return str(f'Логин: {self.login}, роль: {self.roles}')
 
 
 class DjangoAdminLog(models.Model):
@@ -118,156 +127,201 @@ class DjangoMigrations(models.Model):
         db_table = 'django_migrations'
 
 
-class DjangoSession(models.Model):
-    session_key = models.CharField(primary_key=True, max_length=40)
-    session_data = models.TextField()
-    expire_date = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_session'
-
-
 class Labevent(models.Model):
-    patient = models.ForeignKey('Patient', models.DO_NOTHING)
-    labtype = models.ForeignKey('Labtype', models.DO_NOTHING)
-    value = models.CharField(max_length=200, blank=True, null=True)
-    valuenum = models.FloatField(blank=True, null=True)
-    comments = models.TextField(blank=True, null=True)
-    taken = models.DateTimeField()
-    aflag = models.CharField(max_length=32, blank=True, null=True)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    patient = models.ForeignKey('Patient', models.DO_NOTHING, verbose_name="Пациент")
+    labtype = models.ForeignKey('Labtype', models.DO_NOTHING, verbose_name="Номер вида анализа")
+    value = models.CharField(max_length=200, blank=True, null=True, verbose_name="Показатель")
+    valuenum = models.FloatField(blank=True, null=True, verbose_name="Числовой показатель")
+    comments = models.TextField(blank=True, null=True, verbose_name="Комментарий специалиста")
+    taken = models.DateTimeField(verbose_name="Время взятия анализа")
+    aflag = models.CharField(max_length=32, blank=True, null=True, verbose_name="Отклонение от нормы")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'labevent'
+        verbose_name = "Анализ"
+        verbose_name_plural = "Анализы"
+
+    def __str__(self):
+        return str(self.value)
 
 
 class Labtype(models.Model):
-    name = models.CharField(max_length=100)
-    specimen = models.CharField(max_length=100)
-    mu = models.CharField(max_length=32, blank=True, null=True)
-    lolim = models.CharField(max_length=200, blank=True, null=True)
-    lolimnum = models.FloatField(blank=True, null=True)
-    uplim = models.CharField(max_length=200, blank=True, null=True)
-    uplimnum = models.FloatField(blank=True, null=True)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    name = models.CharField(max_length=100, verbose_name="Название анализа")
+    specimen = models.CharField(max_length=100, verbose_name="Образец")
+    mu = models.CharField(max_length=32, blank=True, null=True, verbose_name="Единицы измерения")
+    lolim = models.CharField(max_length=200, blank=True, null=True, verbose_name="Нижняя граница нормы показателя")
+    lolimnum = models.FloatField(blank=True, null=True, verbose_name="Числовая нижняя граница нормы показателя")
+    uplim = models.CharField(max_length=200, blank=True, null=True, verbose_name="Верхняя граница нормы показателя")
+    uplimnum = models.FloatField(blank=True, null=True, verbose_name="Числовая верхняя граница нормы показателя")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'labtype'
         unique_together = (('name', 'specimen', 'mu'),)
+        verbose_name = "Вид анализа"
+        verbose_name_plural = "Виды анализа"
+
+    def __str__(self):
+        return str(self.name)
 
 
 class Medication(models.Model):
-    nomenclature = models.CharField(max_length=120)
-    manufacturer = models.CharField(max_length=120, blank=True, null=True)
-    dose_form = models.CharField(max_length=50)
-    dose_val = models.FloatField()
-    mu = models.CharField(max_length=32)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    nomenclature = models.CharField(max_length=120, verbose_name="Номенклатура препарата")
+    manufacturer = models.CharField(max_length=120, blank=True, null=True, verbose_name="Производитель препарата")
+    dose_form = models.CharField(max_length=50, verbose_name="Описание единицы учёта препарата")
+    dose_val = models.FloatField(verbose_name="Кол-во вещества в единице учёта")
+    mu = models.CharField(max_length=32, verbose_name="Единицы измерения вещества лекарства")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'medication'
+        verbose_name = "Препараты"
+        verbose_name_plural = "Препарат"
+
+    def __str__(self):
+        return str(self.nomenclature)
 
 
 class Medindex(models.Model):
-    therapy = models.ForeignKey('Therapy', models.DO_NOTHING)
-    index_type = models.SmallIntegerField()
-    value = models.FloatField(blank=True, null=True)
-    aflag = models.CharField(max_length=32, blank=True, null=True)
-    comments = models.TextField(blank=True, null=True)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    therapy = models.ForeignKey('Therapy', models.DO_NOTHING, verbose_name="Номер терапии")
+    index_type = models.SmallIntegerField(verbose_name="Тип индекса")
+    value = models.FloatField(blank=True, null=True, verbose_name="Значение индекса")
+    aflag = models.CharField(max_length=32, blank=True, null=True, verbose_name="Отклонение от нормы")
+    comments = models.TextField(blank=True, null=True, verbose_name="Примечание специалиста")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'medindex'
+        verbose_name = "Клинический индекс"
+        verbose_name_plural = "Клинические индексы"
+
+    def __str__(self):
+        return str(self.value)
 
 
 class Medorder(models.Model):
-    supplier = models.CharField(max_length=120)
-    form_date = models.DateTimeField()
-    delivery_date = models.DateTimeField(blank=True, null=True)
-    status = models.SmallIntegerField()
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    supplier = models.CharField(max_length=120, verbose_name="Поставщик препаратов")
+    form_date = models.DateTimeField(verbose_name="Время формирования и отправки заказа")
+    delivery_date = models.DateTimeField(blank=True, null=True, verbose_name="Время поступления заказа")
+    status = models.SmallIntegerField(verbose_name="Статус заказа")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'medorder'
+        verbose_name = "Заказ в аптеку"
+        verbose_name_plural = "Заказы в аптеку"
+
+    def __str__(self):
+        return str(self.supplier)
 
 
 class OrderEntry(models.Model):
-    medication = models.ForeignKey(Medication, models.DO_NOTHING)
-    medorder = models.ForeignKey(Medorder, models.DO_NOTHING)
-    amount = models.IntegerField()
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    medication = models.ForeignKey(Medication, models.DO_NOTHING, verbose_name="Номер препарат")
+    medorder = models.ForeignKey(Medorder, models.DO_NOTHING, verbose_name="Номер заказа в аптеке")
+    amount = models.IntegerField(verbose_name="Кол-во единиц на заказ")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'order_entry'
+        verbose_name = "Запись заказа"
+        verbose_name_plural = "Записи заказов"
 
+    def __str__(self):
+        return str(f'Препарат: {self.medication.nomenclature}')
+
+
+sex_choices = (
+    (1, 'Мужской'),
+    (2, 'Женский')
+)
 
 class Patient(models.Model):
-    full_name = models.CharField(max_length=96)
-    phone_number = models.CharField(max_length=11)
-    adverse_reactions = models.TextField(blank=True, null=True)
-    date_of_birth = models.DateField()
-    sex = models.SmallIntegerField()
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
-    email = models.CharField(max_length=120, blank=True, null=True)
-    contact_person = models.CharField(max_length=11, blank=True, null=True)
-    ambulatory_card = models.CharField(unique=True, max_length=10, blank=True, null=True)
-    finance_source = models.SmallIntegerField(blank=True, null=True)
+    full_name = models.CharField(max_length=96, verbose_name="ФИО пациента")
+    phone_number = models.CharField(max_length=11, verbose_name="Номер телефона пациента")
+    adverse_reactions = models.TextField(blank=True, null=True, verbose_name="Нежелательные реакции")
+    date_of_birth = models.DateField(verbose_name="Дата рождения")
+    sex = models.SmallIntegerField(verbose_name="Пол пациента", choices=sex_choices)
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
+    email = models.CharField(max_length=120, blank=True, null=True, verbose_name="Электронная почта")
+    contact_person = models.CharField(max_length=11, blank=True, null=True, verbose_name="Телефонный номер контактного лица")
+    ambulatory_card = models.CharField(unique=True, max_length=10, blank=True, null=True, verbose_name="Номер амбулаторной карты из системы Interin")
+    finance_source = models.SmallIntegerField(blank=True, null=True, verbose_name="Источник финансирования")
 
     class Meta:
         managed = False
         db_table = 'patient'
+        verbose_name = "Пациент"
+        verbose_name_plural = "Пациенты"
+
+    def __str__(self):
+        return str(self.full_name)
 
 
 class PatientIcd(models.Model):
-    patient = models.ForeignKey(Patient, models.DO_NOTHING)
-    code = models.CharField(max_length=8)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    patient = models.ForeignKey(Patient, models.DO_NOTHING, verbose_name="Пациент")
+    code = models.CharField(max_length=8, verbose_name="Строковый код диагноза по классификации МКБ")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'patient_icd'
         unique_together = (('patient', 'code'),)
+        verbose_name = "Диагноз МКБ"
+        verbose_name_plural = "Диагнозы МКБ"
+
+    def __str__(self):
+        return str(self.code)
 
 
 class Prescription(models.Model):
-    therapy = models.OneToOneField('Therapy', models.DO_NOTHING)
-    medication = models.ForeignKey(Medication, models.DO_NOTHING)
-    dose_amount = models.IntegerField()
-    substance_amount = models.FloatField()
-    administration_type = models.SmallIntegerField(blank=True, null=True)
-    comments = models.TextField(blank=True, null=True)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    therapy = models.ForeignKey('Therapy', models.DO_NOTHING, verbose_name="Номер терапии")
+    medication = models.ForeignKey(Medication, models.DO_NOTHING, verbose_name="Препарат")
+    dose_amount = models.IntegerField(verbose_name="Кол-во списанного к терапии лекарства в дозах")
+    substance_amount = models.FloatField(verbose_name="Кол-во списанного к терапии вещества лекарства")
+    administration_type = models.SmallIntegerField(blank=True, null=True, verbose_name="Тип введения препарата")
+    comments = models.TextField(blank=True, null=True, verbose_name="Примечание к назначению")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'prescription'
+        verbose_name = "Лекарственное назначение"
+        verbose_name_plural = "Лекарственные назначения"
+
+    def __str__(self):
+        return str(self.administration_type)
 
 
 class Therapy(models.Model):
-    patient = models.ForeignKey(Patient, models.DO_NOTHING)
-    date = models.DateField()
-    time_period = models.SmallIntegerField()
-    status = models.SmallIntegerField()
-    comments = models.TextField(blank=True, null=True)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    patient = models.ForeignKey(Patient, models.DO_NOTHING, verbose_name="Пациент")
+    date = models.DateField(verbose_name="Дата проведения терапии")
+    time_period = models.SmallIntegerField(verbose_name="Время проведения терапии")
+    status = models.SmallIntegerField(verbose_name="Статус терапии")
+    comments = models.TextField(blank=True, null=True, verbose_name="Примечание к записи о терапии")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
         db_table = 'therapy'
+        verbose_name = "Запись о терапии"
+        verbose_name_plural = "Записи о терапии"
+
+    def __str__(self):
+        return str(f'Пациент: {self.patient.full_name}, дата: {self.date}')
