@@ -229,12 +229,17 @@ class OrderEntry(models.Model):
         return str(f'Препарат: {self.medication.nomenclature}')
 
 
+sex_choices = (
+    (1, 'Мужской'),
+    (2, 'Женский')
+)
+
 class Patient(models.Model):
     full_name = models.CharField(max_length=96, verbose_name="ФИО пациента")
     phone_number = models.CharField(max_length=11, verbose_name="Номер телефона пациента")
     adverse_reactions = models.TextField(blank=True, null=True, verbose_name="Нежелательные реакции")
     date_of_birth = models.DateField(verbose_name="Дата рождения")
-    sex = models.SmallIntegerField(verbose_name="Пол пациента")
+    sex = models.SmallIntegerField(verbose_name="Пол пациента", choices=sex_choices)
     created = models.DateTimeField(verbose_name=createdAt)
     changed = models.DateTimeField(verbose_name=changedAt)
     email = models.CharField(max_length=120, blank=True, null=True, verbose_name="Электронная почта")

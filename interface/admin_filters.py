@@ -16,8 +16,8 @@ class LabTypeFilters(admin.ModelAdmin):
 
 class LabEventFilters(admin.ModelAdmin):
 	list_display = ['patient_id', 'value', 'aflag', 'taken']
-	list_filter = ['lab_type_id', 'taken']
-	search_fields = ['id', 'patient_id', 'lab_type_id']
+	list_filter = ['labtype', 'taken']
+	search_fields = ['id', 'patient_id', 'labtype']
 
 
 class IndexTypeFilters(admin.ModelAdmin):
@@ -27,26 +27,26 @@ class IndexTypeFilters(admin.ModelAdmin):
 
 
 class PatientIcdFilters(admin.ModelAdmin):
-	list_display = ['code', 'patient_id']
+	list_display = ['code', 'patient']
 	list_filter = ['created', 'changed']
 	search_fields = ['code']
 
 
 class MedOrderFilters(admin.ModelAdmin):
-	list_display = ['supplier', 'status', 'form_date', 'delivery_rate']
+	list_display = ['supplier', 'status', 'form_date', 'delivery_date']
 	list_filter = ['supplier', 'status', 'created', 'changed']
 	search_fields = ['supplier', 'status']
 
 
 class OrderEntryFilters(admin.ModelAdmin):
-	list_display = ['medication_id', 'med_order_id', 'amount']
-	list_filter = ['medication_id__nomenclature', 'med_order_id__supplier', 'created', 'changed']
-	search_fields = ['medication_id__nomenclature', 'med_order_id__supplier']
+	list_display = ['medication_id', 'medorder', 'amount']
+	list_filter = ['medication_id__nomenclature', 'medorder__supplier', 'created', 'changed']
+	search_fields = ['medication_id__nomenclature', 'medorder__supplier']
 
 
 class TherapyFilters(admin.ModelAdmin):
-	list_display = ['patient_id', 'start_time', 'status']
-	list_filter = ['status', 'start_time', 'end_time', 'created', 'changed']
+	list_display = ['patient_id', 'date', 'time_period', 'status']
+	list_filter = ['status', 'date', 'created', 'changed']
 	search_fields = ['patient_id__full_name']
 
 
