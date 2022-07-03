@@ -128,15 +128,15 @@ class DjangoMigrations(models.Model):
 
 
 class Labevent(models.Model):
-    patient = models.ForeignKey('Patient', models.DO_NOTHING)
-    labtype = models.ForeignKey('Labtype', models.DO_NOTHING)
-    value = models.CharField(max_length=200, blank=True, null=True)
-    valuenum = models.FloatField(blank=True, null=True)
-    comments = models.TextField(blank=True, null=True)
-    taken = models.DateTimeField()
-    aflag = models.CharField(max_length=32, blank=True, null=True)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    patient = models.ForeignKey('Patient', models.DO_NOTHING, verbose_name="Пациент")
+    labtype = models.ForeignKey('Labtype', models.DO_NOTHING, verbose_name="Номер вида анализа")
+    value = models.CharField(max_length=200, blank=True, null=True, verbose_name="Показатель")
+    valuenum = models.FloatField(blank=True, null=True, verbose_name="Числовой показатель")
+    comments = models.TextField(blank=True, null=True, verbose_name="Комментарий специалиста")
+    taken = models.DateTimeField(verbose_name="Время взятия анализа")
+    aflag = models.CharField(max_length=32, blank=True, null=True, verbose_name="Отклонение от нормы")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
@@ -149,15 +149,15 @@ class Labevent(models.Model):
 
 
 class Labtype(models.Model):
-    name = models.CharField(max_length=100)
-    specimen = models.CharField(max_length=100)
-    mu = models.CharField(max_length=32, blank=True, null=True)
-    lolim = models.CharField(max_length=200, blank=True, null=True)
-    lolimnum = models.FloatField(blank=True, null=True)
-    uplim = models.CharField(max_length=200, blank=True, null=True)
-    uplimnum = models.FloatField(blank=True, null=True)
-    created = models.DateTimeField()
-    changed = models.DateTimeField()
+    name = models.CharField(max_length=100, verbose_name="Название анализа")
+    specimen = models.CharField(max_length=100, verbose_name="Образец")
+    mu = models.CharField(max_length=32, blank=True, null=True, verbose_name="Единицы измерения")
+    lolim = models.CharField(max_length=200, blank=True, null=True, verbose_name="Нижняя граница нормы показателя")
+    lolimnum = models.FloatField(blank=True, null=True, verbose_name="Числовая нижняя граница нормы показателя")
+    uplim = models.CharField(max_length=200, blank=True, null=True, verbose_name="Верхняя граница нормы показателя")
+    uplimnum = models.FloatField(blank=True, null=True, verbose_name="Числовая верхняя граница нормы показателя")
+    created = models.DateTimeField(verbose_name=createdAt)
+    changed = models.DateTimeField(verbose_name=changedAt)
 
     class Meta:
         managed = False
