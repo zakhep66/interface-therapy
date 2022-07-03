@@ -86,6 +86,8 @@ class Customer(models.Model):
     class Meta:
         managed = False
         db_table = 'customer'
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
 
     def __str__(self):
         return str(f'Логин: {self.login}, роль: {self.roles}')
@@ -139,6 +141,8 @@ class Labevent(models.Model):
     class Meta:
         managed = False
         db_table = 'labevent'
+        verbose_name = "Анализ"
+        verbose_name_plural = "Анализы"
 
     def __str__(self):
         return str(self.value)
@@ -159,6 +163,8 @@ class Labtype(models.Model):
         managed = False
         db_table = 'labtype'
         unique_together = (('name', 'specimen', 'mu'),)
+        verbose_name = "Вид анализа"
+        verbose_name_plural = "Виды анализа"
 
     def __str__(self):
         return str(self.name)
@@ -176,6 +182,8 @@ class Medication(models.Model):
     class Meta:
         managed = False
         db_table = 'medication'
+        verbose_name = "Препараты"
+        verbose_name_plural = "Препарат"
 
     def __str__(self):
         return str(self.nomenclature)
@@ -193,6 +201,8 @@ class Medindex(models.Model):
     class Meta:
         managed = False
         db_table = 'medindex'
+        verbose_name = "Клинический индекс"
+        verbose_name_plural = "Клинические индексы"
 
     def __str__(self):
         return str(self.value)
@@ -209,6 +219,8 @@ class Medorder(models.Model):
     class Meta:
         managed = False
         db_table = 'medorder'
+        verbose_name = "Заказ в аптеку"
+        verbose_name_plural = "Заказы в аптеку"
 
     def __str__(self):
         return str(self.supplier)
@@ -224,6 +236,8 @@ class OrderEntry(models.Model):
     class Meta:
         managed = False
         db_table = 'order_entry'
+        verbose_name = "Запись заказа"
+        verbose_name_plural = "Записи заказов"
 
     def __str__(self):
         return str(f'Препарат: {self.medication.nomenclature}')
@@ -250,6 +264,8 @@ class Patient(models.Model):
     class Meta:
         managed = False
         db_table = 'patient'
+        verbose_name = "Пациент"
+        verbose_name_plural = "Пациенты"
 
     def __str__(self):
         return str(self.full_name)
@@ -265,6 +281,8 @@ class PatientIcd(models.Model):
         managed = False
         db_table = 'patient_icd'
         unique_together = (('patient', 'code'),)
+        verbose_name = "Диагноз МКБ"
+        verbose_name_plural = "Диагнозы МКБ"
 
     def __str__(self):
         return str(self.code)
@@ -283,6 +301,8 @@ class Prescription(models.Model):
     class Meta:
         managed = False
         db_table = 'prescription'
+        verbose_name = "Лекарственное назначение"
+        verbose_name_plural = "Лекарственные назначения"
 
     def __str__(self):
         return str(self.administration_type)
@@ -300,6 +320,8 @@ class Therapy(models.Model):
     class Meta:
         managed = False
         db_table = 'therapy'
+        verbose_name = "Запись о терапии"
+        verbose_name_plural = "Записи о терапии"
 
     def __str__(self):
         return str(f'Пациент: {self.patient.full_name}, дата: {self.date}')
