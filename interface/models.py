@@ -127,6 +127,12 @@ class DjangoMigrations(models.Model):
         db_table = 'django_migrations'
 
 
+labevent_aflag = (
+    ('True', 'Истинно'),
+    ('False', 'Ложно')
+)
+
+
 class Labevent(models.Model):
     patient = models.ForeignKey('Patient', models.DO_NOTHING, verbose_name="Пациент")
     labtype = models.ForeignKey('Labtype', models.DO_NOTHING, verbose_name="Номер вида анализа")
@@ -134,7 +140,7 @@ class Labevent(models.Model):
     valuenum = models.FloatField(blank=True, null=True, verbose_name="Числовой показатель")
     comments = models.TextField(blank=True, null=True, verbose_name="Комментарий специалиста")
     taken = models.DateTimeField(verbose_name="Время взятия анализа")
-    aflag = models.CharField(max_length=32, blank=True, null=True, verbose_name="Отклонение от нормы")
+    aflag = models.CharField(max_length=32, blank=True, null=True, verbose_name="Отклонение от нормы", choices=labevent_aflag)
     created = models.DateTimeField(verbose_name=createdAt)
     changed = models.DateTimeField(verbose_name=changedAt)
 
@@ -189,11 +195,23 @@ class Medication(models.Model):
         return str(self.nomenclature)
 
 
+medindex_index_type = (
+    (0, 'SDAI'),
+    (1, 'DAS'),
+    (2, 'BASDAI')
+)
+
+medindex_aflag = (
+    ('True', 'Истинно'),
+    ('False', 'Ложно'),
+)
+
+
 class Medindex(models.Model):
     therapy = models.ForeignKey('Therapy', models.DO_NOTHING, verbose_name="Номер терапии")
-    index_type = models.SmallIntegerField(verbose_name="Тип индекса")
+    index_type = models.SmallIntegerField(verbose_name="Тип индекса", choices=medindex_index_type)
     value = models.FloatField(blank=True, null=True, verbose_name="Значение индекса")
-    aflag = models.CharField(max_length=32, blank=True, null=True, verbose_name="Отклонение от нормы")
+    aflag = models.CharField(max_length=32, blank=True, null=True, verbose_name="Отклонение от нормы", choices=medindex_aflag)
     comments = models.TextField(blank=True, null=True, verbose_name="Примечание специалиста")
     created = models.DateTimeField(verbose_name=createdAt)
     changed = models.DateTimeField(verbose_name=changedAt)
@@ -208,11 +226,18 @@ class Medindex(models.Model):
         return str(self.value)
 
 
+medorder_status = (
+    (0, 'SEND'),
+    (1, 'FORMING'),
+    (2, 'FINISHED')
+)
+
+
 class Medorder(models.Model):
     supplier = models.CharField(max_length=120, verbose_name="Поставщик препаратов")
     form_date = models.DateTimeField(verbose_name="Время формирования и отправки заказа")
     delivery_date = models.DateTimeField(blank=True, null=True, verbose_name="Время поступления заказа")
-    status = models.SmallIntegerField(verbose_name="Статус заказа")
+    status = models.SmallIntegerField(verbose_name="Статус заказа", choices=medorder_status)
     created = models.DateTimeField(verbose_name=createdAt)
     changed = models.DateTimeField(verbose_name=changedAt)
 
@@ -248,6 +273,12 @@ sex_choices = (
     (2, 'Женский')
 )
 
+patient_finance_source = (
+    (0, 'ОМС'),
+    (1, 'ДМС'),
+    (2, 'Бюджетная основа')
+)
+
 class Patient(models.Model):
     full_name = models.CharField(max_length=96, verbose_name="ФИО пациента")
     phone_number = models.CharField(max_length=11, verbose_name="Номер телефона пациента")
@@ -259,7 +290,7 @@ class Patient(models.Model):
     email = models.CharField(max_length=120, blank=True, null=True, verbose_name="Электронная почта")
     contact_person = models.CharField(max_length=11, blank=True, null=True, verbose_name="Телефонный номер контактного лица")
     ambulatory_card = models.CharField(unique=True, max_length=10, blank=True, null=True, verbose_name="Номер амбулаторной карты из системы Interin")
-    finance_source = models.SmallIntegerField(blank=True, null=True, verbose_name="Источник финансирования")
+    finance_source = models.SmallIntegerField(blank=True, null=True, verbose_name="Источник финансирования", choices=patient_finance_source)
 
     class Meta:
         managed = False
@@ -288,12 +319,18 @@ class PatientIcd(models.Model):
         return str(self.code)
 
 
+prescription_administration_type = (
+    (0, 'SUBCUTANEOUS'),
+    (1, 'INTRAVENOUS')
+)
+
+
 class Prescription(models.Model):
     therapy = models.ForeignKey('Therapy', models.DO_NOTHING, verbose_name="Номер терапии")
     medication = models.ForeignKey(Medication, models.DO_NOTHING, verbose_name="Препарат")
     dose_amount = models.IntegerField(verbose_name="Кол-во списанного к терапии лекарства в дозах")
     substance_amount = models.FloatField(verbose_name="Кол-во списанного к терапии вещества лекарства")
-    administration_type = models.SmallIntegerField(blank=True, null=True, verbose_name="Тип введения препарата")
+    administration_type = models.SmallIntegerField(blank=True, null=True, verbose_name="Тип введения препарата", choices=prescription_administration_type)
     comments = models.TextField(blank=True, null=True, verbose_name="Примечание к назначению")
     created = models.DateTimeField(verbose_name=createdAt)
     changed = models.DateTimeField(verbose_name=changedAt)
@@ -308,11 +345,23 @@ class Prescription(models.Model):
         return str(self.administration_type)
 
 
+status = (
+    (0, 'NOT_NOTIFIED'),
+    (1, 'NOTIFIED'),
+    (2, 'NOT_COMING'),
+    (3, 'FINISHED'),
+)
+
+time_period = (
+    (0, 'MORNING'),
+    (1, 'DAY')
+)
+
 class Therapy(models.Model):
     patient = models.ForeignKey(Patient, models.DO_NOTHING, verbose_name="Пациент")
     date = models.DateField(verbose_name="Дата проведения терапии")
-    time_period = models.SmallIntegerField(verbose_name="Время проведения терапии")
-    status = models.SmallIntegerField(verbose_name="Статус терапии")
+    time_period = models.SmallIntegerField(verbose_name="Время проведения терапии", choices=time_period)
+    status = models.SmallIntegerField(verbose_name="Статус терапии", choices=status)
     comments = models.TextField(blank=True, null=True, verbose_name="Примечание к записи о терапии")
     created = models.DateTimeField(verbose_name=createdAt)
     changed = models.DateTimeField(verbose_name=changedAt)
